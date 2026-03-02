@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HN Buddy</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-slot="app-root">
+    <div class="app-shell" data-slot="app-shell">
+      <header class="topbar" data-slot="header">
+        <div class="brand-wrap">
+          <img class="brand-logo" src="icons/64.png" alt="HN Buddy logo" />
+          <div class="title-wrap">
+            <p id="todayLabel" class="date-label"></p>
+            <h1>HN Buddy</h1>
+          </div>
+        </div>
+
+        <div class="topbar-actions" data-slot="header-actions">
+          <button
+            id="themeToggle"
+            class="icon-button ui-button ui-button-outline ui-button-icon square top-action"
+            type="button"
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            <span id="themeIcon" aria-hidden="true">
+              <svg id="themeIconMoon" class="lucide-icon" viewBox="0 0 24 24">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+              </svg>
+              <svg id="themeIconSun" class="lucide-icon hidden" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+              </svg>
+            </span>
+          </button>
+          <button
+            id="newPostButton"
+            class="icon-button ui-button ui-button-outline ui-button-icon square top-action"
+            type="button"
+            title="Create new post"
+            aria-label="Create new post"
+          >
+            <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"></path>
+            </svg>
+          </button>
+          <button
+            id="settingsButton"
+            class="icon-button ui-button ui-button-outline ui-button-icon square top-action"
+            type="button"
+            title="Open settings"
+            aria-label="Open settings"
+          >
+            <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="21" y1="4" x2="14" y2="4"></line>
+              <line x1="10" y1="4" x2="3" y2="4"></line>
+              <line x1="21" y1="12" x2="12" y2="12"></line>
+              <line x1="8" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="20" x2="16" y2="20"></line>
+              <line x1="12" y1="20" x2="3" y2="20"></line>
+              <line x1="14" y1="2" x2="14" y2="6"></line>
+              <line x1="8" y1="10" x2="8" y2="14"></line>
+              <line x1="16" y1="18" x2="16" y2="22"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <nav id="feedTabs" class="tabs ui-tabs-list" aria-label="Story feeds" data-slot="tabs-list"></nav>
+
+      <div id="statusBar" class="status-bar" aria-live="polite" data-slot="status-bar">
+        <span id="statusText">Loading feed...</span>
+        <button id="authButton" class="auth-link" type="button">Sign in</button>
+      </div>
+
+      <main data-slot="scroll-area" class="ui-scroll-area">
+        <section id="storyList" class="story-list" aria-label="Stories"></section>
+      </main>
+    </div>
+
+    <section id="toast" class="toast hidden" aria-live="assertive"></section>
+
+    <section id="commentsModal" class="modal ui-dialog hidden" aria-hidden="true">
+      <div class="backdrop ui-dialog-overlay" data-close="commentsModal"></div>
+      <article class="modal-panel ui-dialog-content comments-panel" role="dialog" aria-modal="true" aria-label="Comments" data-slot="dialog-content">
+        <header class="modal-header comments-header">
+          <button class="comments-back-button ui-button ui-button-ghost ui-button-icon ui-button-sm" type="button" data-close="commentsModal" aria-label="Back">
+            <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 19-7-7 7-7"></path>
+              <path d="M19 12H5"></path>
+            </svg>
+          </button>
+        </header>
+
+        <section id="commentsStoryCard" class="comments-story-card">
+          <div class="comments-story-main">
+            <a id="commentsStoryLink" class="story-jump" href="#" target="_blank" rel="noreferrer noopener">Open story</a>
+            <div id="commentsStoryDomain" class="comments-story-domain"></div>
+            <div id="commentsStoryMeta" class="comments-story-meta"></div>
+          </div>
+          <a id="commentsStoryThumbWrap" class="comments-story-thumb-wrap" href="#" target="_blank" rel="noreferrer noopener" aria-label="Open story">
+            <img id="commentsStoryThumb" class="comments-story-thumb hidden" alt="" loading="lazy" />
+            <span id="commentsStoryThumbFallback" class="comments-story-thumb-fallback">HN</span>
+          </a>
+        </section>
+
+        <form id="storyCommentForm" class="composer comment-composer hidden">
+          <div class="comment-input-row">
+            <textarea id="storyCommentInput" class="ui-textarea" name="text" rows="1" maxlength="5000" placeholder="Comment"></textarea>
+            <button id="submitStoryComment" class="send-icon-button ui-button ui-button-primary ui-button-icon" type="submit" aria-label="Send comment">
+              <svg class="lucide-icon send-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m3 3 3 9-3 9 19-9Z"></path>
+                <path d="M6 12h16"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <div id="commentsAuthHint" class="hint"></div>
+
+        <div id="commentsList" class="comments-list"></div>
+      </article>
+    </section>
+
+    <section id="postModal" class="modal ui-dialog hidden" aria-hidden="true">
+      <div class="backdrop ui-dialog-overlay" data-close="postModal"></div>
+      <article class="modal-panel ui-dialog-content" role="dialog" aria-modal="true" aria-labelledby="postTitle" data-slot="dialog-content">
+        <header class="modal-header">
+          <h2 id="postTitle">Create post</h2>
+          <button class="icon-button ui-button ui-button-outline ui-button-icon" type="button" data-close="postModal" aria-label="Close post composer">
+            <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </header>
+
+        <form id="postForm" class="composer">
+          <label for="postTitleInput">Title</label>
+          <input id="postTitleInput" class="ui-input" name="title" maxlength="200" required />
+
+          <label for="postUrlInput">URL (optional)</label>
+          <input id="postUrlInput" class="ui-input" name="url" type="url" placeholder="https://example.com" />
+
+          <label for="postTextInput">Text (optional)</label>
+          <textarea id="postTextInput" class="ui-textarea" name="text" rows="5" maxlength="15000" placeholder="Use text for Ask HN style posts"></textarea>
+
+          <div class="composer-actions">
+            <button id="submitPost" class="pill-button ui-button ui-button-primary" type="submit">Submit post</button>
+          </div>
+        </form>
+
+        <p class="hint">Use title + URL for link posts, or title + text for Ask HN style posts.</p>
+      </article>
+    </section>
+
+    <section id="settingsModal" class="modal ui-dialog hidden" aria-hidden="true">
+      <div class="backdrop ui-dialog-overlay" data-close="settingsModal"></div>
+      <article class="modal-panel ui-dialog-content settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" data-slot="dialog-content">
+        <header class="modal-header">
+          <h2 id="settingsTitle">Settings</h2>
+          <button class="icon-button ui-button ui-button-outline ui-button-icon" type="button" data-close="settingsModal" aria-label="Close settings">
+            <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </header>
+
+        <section class="settings-section">
+          <h3>Primary color</h3>
+          <div id="accentPalette" class="accent-palette" role="listbox" aria-label="Primary color options"></div>
+          <p class="settings-support">
+            Enjoying this extension?
+            <a href="https://zapmeacoffee.com/npub1r0rs5q2gk0e3dk3nlc7gnu378ec6cnlenqp8a3cjhyzu6f8k5sgs4sq9ac" target="_blank" rel="noreferrer noopener"
+              >Zap me a coffee</a
+            >.
+          </p>
+        </section>
+      </article>
+    </section>
+
+    <template id="storyTemplate">
+      <article class="story-card ui-separator-item">
+        <div class="story-grid">
+          <div class="story-main">
+            <div class="story-row story-head">
+              <span class="rank"></span>
+              <span class="domain"></span>
+            </div>
+            <a class="story-title" href="#" target="_blank" rel="noreferrer noopener"></a>
+            <div class="story-meta"></div>
+            <div class="story-row story-stats">
+              <button class="vote-trigger ui-button ui-button-ghost ui-button-icon ui-button-sm" type="button" title="Upvote" aria-label="Upvote story">
+                <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m18 15-6-6-6 6"></path>
+                </svg>
+              </button>
+              <span class="score"></span>
+              <button class="comments-trigger" type="button"></button>
+            </div>
+          </div>
+          <a class="story-media" href="#" target="_blank" rel="noreferrer noopener" aria-label="Open story">
+            <img class="story-thumb hidden" alt="" loading="lazy" />
+            <span class="story-thumb-fallback">HN</span>
+          </a>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
