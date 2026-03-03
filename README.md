@@ -15,7 +15,7 @@ A sleek Hacker News popup widget with feed tabs, story browsing, theme toggle, a
 1. Open `chrome://extensions`.
 2. Enable **Developer mode**.
 3. Click **Load unpacked**.
-4. Select this folder: `/Users/k/code/hnbuddy`.
+4. Select this project folder (the extension root you cloned/downloaded).
 
 ## Notes on authentication
 - The extension does **not** handle HN credentials itself.
@@ -27,18 +27,3 @@ A sleek Hacker News popup widget with feed tabs, story browsing, theme toggle, a
 - Host permissions:
   - `https://news.ycombinator.com/*` for auth-aware form actions.
   - `https://hacker-news.firebaseio.com/*` for feed + item reads.
-
-## Architecture
-- `manifest.json`: MV3 extension config.
-- `popup.html`: popup structure + modals.
-- `styles.css`: visual system, dark/light themes, and shadcn-style component layer (`button`, `tabs`, `dialog`, `input`, `textarea`, `card`, `scroll-area`, `separator`).
-- `popup.js`: feed fetching, auth detection, comments rendering, reply/new-post submission.
-
-## shadcn Component Mapping
-- `Button`: top-right actions, vote/reply actions, send/submit actions.
-- `Tabs`: feed category pills.
-- `Dialog`: comments, new post, and settings overlays.
-- `Input` + `Textarea`: post composer + comment composers.
-- `Card`: comment and panel surfaces.
-- `Scroll Area`: feed list and thread list containers.
-- `Separator`: story item dividers.
