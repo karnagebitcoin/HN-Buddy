@@ -2,6 +2,8 @@
 
 A sleek Hacker News popup widget with feed tabs, story browsing, theme toggle, and in-popup discussion actions.
 
+![HN Buddy screenshot](docs/screenshot.png)
+
 ## Features
 - Top, Ask HN, Show HN, Best, New, and Jobs feed tabs.
 - Modern popup experience inspired by mobile/news widget cards.
